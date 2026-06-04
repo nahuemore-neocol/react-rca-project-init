@@ -5,6 +5,7 @@ const path = require('node:path');
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');
+const skillsOnly = args.includes('--skills-only');
 const help = args.includes('--help') || args.includes('-h');
 const positionalArgs = args.filter((arg) => !arg.startsWith('-'));
 const targetDir = path.resolve(positionalArgs[0] || process.cwd());
@@ -53,6 +54,11 @@ function copyTemplateTree(sourceDir, destinationDir, rootDir, output) {
 
     const relativePath = path.relative(rootDir, destinationPath);
     if (relativePath === 'CLAUDE.md') {
+      if (skillsOnly) {
+        output.push({ status: 'skipped', relativePath });
+        continue;
+      }
+
       mergeClaudeFile(sourcePath, destinationPath, output, relativePath);
       continue;
     }
@@ -127,7 +133,7 @@ function replaceManagedBlock(content, managedBlock) {
 }
 
 function printHelp() {
-  console.log('Usage: npx rca-skills-builder [target-directory] [--force]');
+  console.log('Usage: npx rca-skills-builder [target-directory] [--force] [--skills-only]');
   console.log('');
-  console.log('Creates CLAUDE.md and starter .claude/skills files.');
+  console.log('Creates starter .claude/skills files and optionally CLAUDE.md.');
 }

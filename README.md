@@ -22,12 +22,19 @@ npx github:nahuemore-neocol/react-rca-project-init
 
 Run the command from inside the project folder where you want to create or merge the `CLAUDE.md` and `.claude/skills` files.
 
+Install only the skills without creating or merging `CLAUDE.md`:
+
+```bash
+npx github:nahuemore-neocol/react-rca-project-init -- --skills-only
+```
+
 ## Merge Behavior
 
 - If `CLAUDE.md` does not exist, it is created.
 - If `CLAUDE.md` already exists, this tool appends a managed block instead of overwriting the file.
 - If the managed block already exists, the file is left unchanged by default.
 - Running with `--force` refreshes the managed block content.
+- Running with `--skills-only` skips `CLAUDE.md` entirely and installs only `.claude/skills`.
 - Skill files are preserved by default and overwritten only with `--force`.
 
 ## Example
@@ -68,6 +75,12 @@ Run it against a test folder:
 
 ```bash
 node ./bin/index.js ./sandbox
+```
+
+Run only the skills scaffold locally:
+
+```bash
+node ./bin/index.js ./sandbox --skills-only
 ```
 
 ## Repository Requirements
