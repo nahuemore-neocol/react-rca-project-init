@@ -8,9 +8,16 @@ The main objective is to help the user plan, design, and build maintainable Reac
 
 Do not treat requests as generic React app tasks. Always optimize for Salesforce integration, enterprise UX, and Revenue Cloud Advanced business flows.
 
+Unless the user explicitly asks otherwise, default to a Vercel-hosted native React application built with TypeScript and optimized for Salesforce GraphQL data access.
+
 ## Default Mindset
 
 - Design for Salesforce and Revenue Cloud Advanced first, not for a generic web app.
+- Default to Vercel deployment for new React apps.
+- Default to native React with TypeScript for new app builds.
+- Default to Salesforce GraphQL and the Salesforce React Data SDK for data access when Salesforce data is involved.
+- Always design app queries around GraphQL.
+- For prototype apps, always provide mock data fallback when GraphQL is unavailable, unconfigured, or disconnected.
 - Prefer clean architecture and small, composable React components.
 - Never place an entire app, page, or complex workflow in a single file unless the user explicitly asks for it.
 - Separate UI, business logic, and Salesforce integration concerns.
@@ -22,10 +29,12 @@ Before writing implementation code for a new app or feature, follow this order:
 
 1. Identify the user's goal and the Revenue Cloud Advanced workflow involved.
 2. Clarify the target Salesforce integration model if it is not specified.
-3. Define the screens, user flow, and key actions.
-4. Propose a folder structure and component tree.
-5. Identify data dependencies, business rules, and Salesforce touchpoints.
-6. Implement the feature with separated files and clear responsibilities.
+3. Default the delivery target to Vercel unless the user specifies another hosting model.
+4. Define the screens, user flow, and key actions.
+5. Propose a folder structure and component tree.
+6. Identify data dependencies, business rules, and Salesforce touchpoints.
+7. Define the GraphQL query plan and the mock data fallback plan.
+8. Implement the feature with separated files and clear responsibilities.
 
 If requirements are incomplete, ask focused questions instead of guessing.
 
@@ -34,12 +43,14 @@ If requirements are incomplete, ask focused questions instead of guessing.
 When building React apps related to Salesforce, first determine which model applies:
 
 - React app embedded in Salesforce
-- React app hosted externally and integrated with Salesforce APIs
+- React app hosted on Vercel and integrated with Salesforce APIs
 - React app wrapped by an LWC or Aura container
 
 If the integration model is unclear, ask before making assumptions.
 
 Do not assume direct unrestricted browser access to Salesforce data.
+
+For externally hosted apps, prefer Salesforce GraphQL access patterns that are compatible with the Salesforce React Data SDK guidance in `templates/.claude/skills/salesforce-react-data-sdk/SKILL.md`.
 
 All Salesforce access should be isolated behind a service layer such as:
 
@@ -63,6 +74,8 @@ If a workflow affects business rules or data relationships, model those rules ex
 ## React Architecture Rules
 
 Use a clean, scalable folder structure.
+
+For new apps, prefer a Vercel-friendly React + TypeScript structure.
 
 Preferred structure:
 
@@ -127,6 +140,33 @@ Accessibility expectations:
 
 If the app depends on Apex, REST, GraphQL, or middleware, keep those contracts explicit and isolated.
 
+When GraphQL is used, follow the conventions in `templates/.claude/skills/salesforce-react-data-sdk/SKILL.md` and use `templates/.claude/skills/salesforce-react-data-sdk/scripts/sdk.js` as the reference for the SDK service layer pattern.
+
+For prototype apps, GraphQL should still be the primary integration shape even when live Salesforce connectivity is not available yet.
+
+## Salesforce GraphQL Default
+
+For new Salesforce React apps, assume this default unless the user asks for something else:
+
+- Hosting: Vercel
+- Framework: native React
+- Language: TypeScript
+- Data layer: Salesforce GraphQL for querying
+- SDK pattern: `@salesforce/sdk-data` via a shared service module
+- Fallback mode: mock data when GraphQL is not connected or fails
+
+When generating implementation code, prefer a dedicated SDK file such as `src/services/salesforce/sdk.ts` and keep raw GraphQL calls out of presentational components.
+
+For prototypes, structure the app so screens can continue to render from mock datasets if GraphQL requests fail, are disabled, or the Salesforce connection is not ready.
+
+Claude should treat `templates/.claude/skills/salesforce-react-data-sdk/SKILL.md` as the primary usage guide and `templates/.claude/skills/salesforce-react-data-sdk/scripts/sdk.js` as the concrete SDK and GraphQL example reference.
+
+Do not duplicate inline GraphQL examples in this file. Reuse the shared skill guidance and the example in `templates/.claude/skills/salesforce-react-data-sdk/scripts/sdk.js`.
+
+If batch create, update, or delete utilities are needed, adapt the structure from `templates/.claude/skills/salesforce-react-data-sdk/scripts/sdk.js` into TypeScript rather than inventing a different SDK access pattern.
+
+Prefer mock modules such as `src/features/<feature>/mocks/` or `src/mocks/` for fallback prototype data. Keep the shape of mock records aligned with the GraphQL response mapping used by the feature.
+
 ## Performance Rules
 
 - Avoid unnecessary rerenders.
@@ -142,8 +182,10 @@ When asked to create a new React app or feature, prefer this format:
 1. Brief summary of the user goal
 2. Proposed folder structure
 3. Component hierarchy
-4. Data flow and Salesforce integration notes
-5. Implementation by file
+4. Vercel hosting and deployment assumptions
+5. GraphQL query plan and mock fallback approach
+6. Data flow and Salesforce integration notes
+7. Implementation by file
 
 If the user asks for code, do not output everything in one file unless they explicitly request a single-file example.
 
@@ -152,8 +194,13 @@ If the user asks for code, do not output everything in one file unless they expl
 A task is only complete when:
 
 - The React app structure is clean and maintainable.
+- The app is suitable for Vercel hosting unless the user requested a different deployment model.
 - Components are separated into logical files.
+- TypeScript is used for new React app implementations unless the user requested otherwise.
 - Salesforce integration boundaries are clear.
+- Salesforce GraphQL and SDK usage follow the shared skill and service-layer pattern when applicable.
+- GraphQL is the primary query model.
+- Mock data fallback exists for prototype flows when GraphQL is unavailable or not connected.
 - Revenue Cloud Advanced workflow requirements are reflected in the design.
 - Key states and validations are handled.
 - The solution is realistic for an enterprise Salesforce environment.
