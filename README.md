@@ -17,22 +17,10 @@ The default `CLAUDE.md` template is specialized for designing React applications
 Run it directly from this GitHub repository:
 
 ```bash
-npx github:your-user/rca-skills-builder
+npx github:nahuemore-neocol/react-rca-project-init
 ```
 
-Run it against a specific project folder:
-
-```bash
-npx github:your-user/rca-skills-builder ./my-project
-```
-
-Refresh generated content:
-
-```bash
-npx github:your-user/rca-skills-builder --force
-```
-
-Replace `your-user/rca-skills-builder` with the actual GitHub owner and repository name.
+Run the command from inside the project folder where you want to create or merge the `CLAUDE.md` and `.claude/skills` files.
 
 ## Merge Behavior
 
@@ -60,8 +48,11 @@ After running the scaffold:
 This project already has guidance.
 
 <!-- rca-skills-builder:start -->
+
 # CLAUDE.md
+
 ...
+
 <!-- rca-skills-builder:end -->
 ```
 
