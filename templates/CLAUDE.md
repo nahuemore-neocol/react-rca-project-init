@@ -15,6 +15,7 @@ Unless the user explicitly asks otherwise, default to a Vercel-hosted native Rea
 - Design for Salesforce and Revenue Cloud Advanced first, not for a generic web app.
 - Default to Vercel deployment for new React apps.
 - Default to native React with TypeScript for new app builds.
+- Default to Tailwind CSS for styling in new React apps unless the user requests a different styling system.
 - Default to Salesforce GraphQL and the Salesforce React Data SDK for data access when Salesforce data is involved.
 - Always design app queries around GraphQL.
 - For prototype apps, always provide mock data fallback when GraphQL is unavailable, unconfigured, or disconnected.
@@ -30,11 +31,12 @@ Before writing implementation code for a new app or feature, follow this order:
 1. Identify the user's goal and the Revenue Cloud Advanced workflow involved.
 2. Clarify the target Salesforce integration model if it is not specified.
 3. Default the delivery target to Vercel unless the user specifies another hosting model.
-4. Define the screens, user flow, and key actions.
-5. Propose a folder structure and component tree.
-6. Identify data dependencies, business rules, and Salesforce touchpoints.
-7. Define the GraphQL query plan and the mock data fallback plan.
-8. Implement the feature with separated files and clear responsibilities.
+4. Check the existing project setup before adding dependencies, and install `@salesforce/sdk-data` only if it is not already present when Salesforce GraphQL access is needed.
+5. Define the screens, user flow, and key actions.
+6. Propose a folder structure and component tree.
+7. Identify data dependencies, business rules, and Salesforce touchpoints.
+8. Define the GraphQL query plan and the mock data fallback plan.
+9. Implement the feature with separated files and clear responsibilities.
 
 If requirements are incomplete, ask focused questions instead of guessing.
 
@@ -118,6 +120,7 @@ Do not generate giant page files that mix layout, API calls, validation, and bus
 
 - Design for enterprise Salesforce users.
 - Prefer structured, production-ready interfaces over placeholder demos.
+- Prefer Tailwind utility classes for app styling unless the user requests another CSS approach or the project already uses a different styling system.
 - Include loading, empty, error, and success states.
 - Support complex workflows such as multi-step forms, editable tables, line-item configuration, and approval review.
 - Maintain visual consistency across screens and components.
@@ -151,11 +154,14 @@ For new Salesforce React apps, assume this default unless the user asks for some
 - Hosting: Vercel
 - Framework: native React
 - Language: TypeScript
+- Styling: Tailwind CSS
 - Data layer: Salesforce GraphQL for querying
 - SDK pattern: `@salesforce/sdk-data` via a shared service module
 - Fallback mode: mock data when GraphQL is not connected or fails
 
 When generating implementation code, prefer a dedicated SDK file such as `src/services/salesforce/sdk.ts` and keep raw GraphQL calls out of presentational components.
+
+When a project needs the SDK, first inspect `package.json`. If `@salesforce/sdk-data` is missing, add it with the project's package manager instead of assuming it is already installed.
 
 For prototypes, structure the app so screens can continue to render from mock datasets if GraphQL requests fail, are disabled, or the Salesforce connection is not ready.
 
@@ -197,6 +203,7 @@ A task is only complete when:
 - The app is suitable for Vercel hosting unless the user requested a different deployment model.
 - Components are separated into logical files.
 - TypeScript is used for new React app implementations unless the user requested otherwise.
+- Tailwind CSS is used for new React app styling unless the user requested a different styling approach or the project already follows another styling system.
 - Salesforce integration boundaries are clear.
 - Salesforce GraphQL and SDK usage follow the shared skill and service-layer pattern when applicable.
 - GraphQL is the primary query model.
